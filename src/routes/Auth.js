@@ -1,4 +1,4 @@
-import { authService } from "fbase";
+import { authService, firebaseInstace } from "fbase";
 import React, { useState } from "react";
 export default () => {
   const [email, setEmail] = useState("");
@@ -37,6 +37,21 @@ export default () => {
   const toggleAccount = () => {
     setNewAccouint((prev) => !prev);
   };
+
+  const onSocialClick = async (event) => {
+    const {
+      target: { name },
+    } = event;
+    console.log(name);
+
+    let provider;
+    if (name === "google") {
+      provider = new firebaseInstace.auth.GoogleAuthProvider();
+    }
+    const data = await authService.signInWithPopup(provider);
+    console.log(data);
+  };
+
   return (
     <div>
       <form onSubmit={onSubmit}>
@@ -67,7 +82,9 @@ export default () => {
       </form>
 
       <div>
-        <button>Continue With Google</button>
+        <button name="google" onClick={onSocialClick}>
+          Continue With Google
+        </button>
       </div>
     </div>
   );
