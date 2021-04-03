@@ -1,5 +1,6 @@
 import firebase from "firebase";
-import * as auth from "firebase/auth";
+import "firebase/auth";
+import "firebase/firebase";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDa_fPZdLCP1c9QqLeoHWz45aKCRvzpP0Y",
@@ -13,3 +14,4 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 export const firebaseInstace = firebase;
 export const authService = firebase.auth();
+export const dbService = firebase.firestore();
