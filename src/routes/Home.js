@@ -1,5 +1,6 @@
-import { dbService } from "fbase";
+import { dbService, storageService } from "fbase";
 import React, { useState, useEffect } from "react";
+import { v4 as uuid4 } from "uuid";
 import Nweet from "components/Nweet";
 
 const Home = ({ userObj }) => {
@@ -19,10 +20,23 @@ const Home = ({ userObj }) => {
 
   const onSubmit = async (event) => {
     event.preventDefault();
-    await dbService
-      .collection("nweets")
-      .add({ text: nweet, createAt: Date.now(), creatorId: userObj.uid });
+    let attachmentUrl = "";
+    if (attachment != "") {
+      const attachmentRef = storageService
+        .ref()
+        .child(`${userObj.uid}/${uuid4()}`);
+      const response = await attachmentRef.putString(attachment, "data_url");
+      attachmentUrl = await response.ref.getDownloadURL();
+    }
+    const nweetObject = {
+      text: nweet,
+      createAt: Date.now(),
+      creatorId: userObj.uid,
+      attachmentUrl,
+    };
+    await dbService.collection("nweets").add(nweetObject);
     setNweet("");
+    setAttactment("");
   };
 
   const onChange = (event) => {
