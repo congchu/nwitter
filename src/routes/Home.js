@@ -1,6 +1,6 @@
 import { dbService } from "fbase";
 import React, { useState, useEffect } from "react";
-export default ({ userObj }) => {
+const Home = ({ userObj }) => {
   const [nweet, setNweet] = useState("");
   const [nweets, setNweets] = useState([]);
 
@@ -46,7 +46,7 @@ export default ({ userObj }) => {
         <div>
           {nweets.map((nweet) => (
             <div key={nweet.id}>
-              <h4>{nweet.nweet}</h4>
+              <h4>{nweet.text}</h4>
             </div>
           ))}
         </div>
@@ -55,3 +55,5 @@ export default ({ userObj }) => {
     </div>
   );
 };
+
+export default Home;

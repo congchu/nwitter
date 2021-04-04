@@ -1,6 +1,6 @@
 import { authService, firebaseInstace } from "fbase";
 import React, { useState } from "react";
-export default () => {
+const Auth = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [newAccount, setNewAccouint] = useState(true);
@@ -20,14 +20,10 @@ export default () => {
   const onSubmit = async (event) => {
     event.preventDefault();
     try {
-      let data = null;
       if (newAccount) {
-        data = await authService.createUserWithEmailAndPassword(
-          email,
-          password
-        );
+        await authService.createUserWithEmailAndPassword(email, password);
       } else {
-        data = await authService.signInWithEmailAndPassword(email, password);
+        await authService.signInWithEmailAndPassword(email, password);
       }
     } catch (error) {
       setError(error.message);
@@ -89,3 +85,5 @@ export default () => {
     </div>
   );
 };
+
+export default Auth;
