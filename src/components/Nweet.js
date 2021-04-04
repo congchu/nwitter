@@ -1,6 +1,10 @@
+import React, { useState } from "react";
 import { dbService } from "fbase";
-import React from "react";
+
 const Nweet = ({ nweetObj, isOwner }) => {
+  const [editing, setEditing] = useState(false);
+  const [newNweet, setNewNweet] = useState(nweetObj.text);
+
   const onDeleteClick = () => {
     const ok = window.confirm("Are you sure you want to delete thie nweet?");
     if (ok) {
@@ -8,11 +12,49 @@ const Nweet = ({ nweetObj, isOwner }) => {
     }
   };
 
+  const toggleEditing = () => {
+    setEditing((prev) => !prev);
+  };
+
+  const onChange = (event) => {
+    const {
+      target: { value },
+    } = event;
+    setNewNweet(value);
+  };
+
+  const onSubmit = async (event) => {
+    event.preventDefault();
+    await dbService.doc(`nweets/${nweetObj.id}`).update({
+      text: newNweet,
+    });
+    toggleEditing();
+  };
+
   return (
     <div>
-      <h4>{nweetObj.text}</h4>
+      {editing ? (
+        <>
+          <form onSubmit={onSubmit}>
+            <input
+              type="text"
+              placehoder="Edit your nweet"
+              value={newNweet}
+              required
+              onChange={onChange}
+            />
+            <input type="submit" value="Update Nweet" />
+          </form>
+          {isOwner && <button onClick={toggleEditing}>Cancel</button>}
+        </>
+      ) : (
+        <>
+          <h4>{nweetObj.text}</h4>
+          {isOwner && <button onClick={toggleEditing}>Edit Nweet</button>}
+        </>
+      )}
+
       {isOwner && <button onClick={onDeleteClick}>Delete Nweet</button>}
-      {isOwner && <button>Edit Nweet</button>}
     </div>
   );
 };
