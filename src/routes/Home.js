@@ -1,17 +1,17 @@
 import { dbService } from "fbase";
 import React, { useState, useEffect } from "react";
-export default () => {
+export default ({ userObj }) => {
   const [nweet, setNweet] = useState("");
   const [nweets, setNweets] = useState([]);
 
   const getNweets = async () => {
     const dbNweets = await dbService.collection("nweets").get();
     dbNweets.forEach((document) => {
-      const nweetObejct = {
+      const nweetObject = {
         ...document.data(),
         id: document.id,
       };
-      setNweets((prev) => [nweetObejct, ...prev]);
+      setNweets((prev) => [nweetObject, ...prev]);
     });
   };
   useEffect(() => {
@@ -20,7 +20,9 @@ export default () => {
 
   const onSubmit = async (event) => {
     event.preventDefault();
-    await dbService.collection("nweets").add({ nweet, createAt: Date.now() });
+    await dbService
+      .collection("nweets")
+      .add({ text: nweet, createAt: Date.now(), creatorId: userObj.uid });
     setNweet("");
   };
 
@@ -28,7 +30,6 @@ export default () => {
     const {
       target: { value },
     } = event;
-
     setNweet(value);
   };
   return (
