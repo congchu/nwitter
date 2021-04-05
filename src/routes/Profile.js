@@ -8,7 +8,10 @@ const Profile = ({ userObj, refreshUser }) => {
     getMyNweets();
   }, []);
 
-  const onLogOutClick = () => authService.signOut();
+  const onLogOutClick = () => {
+    authService.signOut();
+    refreshUser();
+  };
 
   const getMyNweets = async () => {
     const nweets = await dbService
