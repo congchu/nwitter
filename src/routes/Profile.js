@@ -1,8 +1,15 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { authService, dbService } from "fbase";
 
 const Profile = ({ userObj }) => {
+  const [newDisplayName, setNewDisplayName] = useState(userObj.displayName);
+
+  useEffect(() => {
+    getMyNweets();
+  }, []);
+
   const onLogOutClick = () => authService.signOut();
+
   const getMyNweets = async () => {
     const nweets = await dbService
       .collection("nweets")
@@ -11,11 +18,34 @@ const Profile = ({ userObj }) => {
       .get();
     console.log(nweets.docs.map((doc) => doc.data()));
   };
-  useEffect(() => {
-    getMyNweets();
-  }, []);
+
+  const onChangeDisplayName = (event) => {
+    const {
+      target: { value },
+    } = event;
+    setNewDisplayName(value);
+  };
+
+  const onSubmitDisplayName = async (event) => {
+    event.preventDefault();
+    if (userObj.displayName !== newDisplayName) {
+      await userObj.updateProfile({
+        displayName: newDisplayName,
+      });
+    }
+  };
+
   return (
     <>
+      <form onSubmit={onSubmitDisplayName}>
+        <input
+          type="text"
+          placeholder="Display Name"
+          value={newDisplayName}
+          onChange={onChangeDisplayName}
+        />
+        <input type="submit" value="Update Profile" />
+      </form>
       <button onClick={onLogOutClick}>Log Out</button>
     </>
   );
